@@ -1,0 +1,45 @@
+
+<div class="app-container">
+
+    <!-- Application Header -->
+    <header class="app-header">
+
+        <div class="app-brand">
+            <span class="brand-icon">📦</span>
+            <h2>Warehouse Intelligence</h2>
+        </div>
+
+        <span class="header-badge">AI Monitoring</span>
+
+    </header>
+
+    <!-- Top Navigation -->
+    <nav class="top-navigation">
+
+        <a routerLink="/prediction"
+           routerLinkActive="active"
+           [routerLinkActiveOptions]="{ exact: true }">
+
+            <span>⚙️</span>
+            Motor Prediction
+
+        </a>
+
+        <a routerLink="/package-inspection"
+           routerLinkActive="active">
+
+            <span>📦</span>
+            Package Inspection
+
+        </a>
+<button class="logout-button" (click)="logout()">
+    ↪ Logout
+</button>
+    </nav>
+
+    <!-- Page Content -->
+    <main class="main-content">
+        <router-outlet></router-outlet>
+    </main>
+
+</div>

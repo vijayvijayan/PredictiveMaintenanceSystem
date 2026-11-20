@@ -1,0 +1,147 @@
+
+<div class="page-container">
+
+    <div class="page-heading">
+        <div>
+            <h2>Motor Health Prediction</h2>
+            <p>Enter equipment sensor readings to predict potential motor failure.</p>
+        </div>
+        <span class="status-badge">AI Monitoring</span>
+    </div>
+
+    <div class="prediction-layout">
+
+        <!-- Sensor Input -->
+        <div class="panel">
+            <div class="panel-heading">
+                <h4>Equipment Sensor Data</h4>
+                <p>Enter the current motor readings below.</p>
+            </div>
+
+            <form [formGroup]="predictionForm" (ngSubmit)="getPrediction()">
+
+                <div class="form-grid">
+
+                    <div class="form-group">
+                        <label for="temperature">Temperature (°C)</label>
+                        <input id="temperature" type="number" formControlName="temperature" />
+
+                        @if (predictionForm.controls.temperature.touched && predictionForm.controls.temperature.hasError('required')) {
+                            <p class="validation-message">
+                                Temperature is required
+                            </p>
+                        }
+                    </div>
+
+                    <div class="form-group">
+                        <label for="vibration">Vibration (mm/s)</label>
+                        <input id="vibration" type="number" formControlName="vibration" />
+
+                        @if (predictionForm.controls.vibration.touched && predictionForm.controls.vibration.hasError('required')) {
+                            <p class="validation-message">
+                                Vibration is required
+                            </p>
+                        }
+                    </div>
+
+                    <div class="form-group">
+                        <label for="motorSpeed">Motor Speed (RPM)</label>
+                        <input id="motorSpeed" type="number" formControlName="motorSpeed" />
+
+                        @if (predictionForm.controls.motorSpeed.touched && predictionForm.controls.motorSpeed.hasError('required')) {
+                            <p class="validation-message">
+                                Motor Speed is required
+                            </p>
+                        }
+                    </div>
+
+                    <div class="form-group">
+                        <label for="operatingHours">Operating Hours</label>
+                        <input id="operatingHours" type="number" formControlName="operatingHours" />
+
+                        @if (predictionForm.controls.operatingHours.touched && predictionForm.controls.operatingHours.hasError('required')) {
+                            <p class="validation-message">
+                                Operating Hours is required
+                            </p>
+                        }
+                    </div>
+
+                </div>
+
+                <button type="submit" class="predict-button" [disabled]="loading()">
+                    @if (loading()) {
+                        Analysing...
+                    } @else {
+                        Predict Motor Failure
+                    }
+                </button>
+
+            </form>
+        </div>
+
+        <!-- Prediction Result -->
+        <div class="panel result-panel">
+
+            <div class="panel-heading">
+                <h4>Prediction Result</h4>
+                <p>AI model analysis</p>
+            </div>
+
+            @if (predictionResult() === null) {
+
+                <div class="result-placeholder">
+                    <div class="result-icon">✦</div>
+                    <h3>Awaiting Prediction</h3>
+                    <p>Enter sensor readings and click Predict to analyse motor health.</p>
+                </div>
+
+            } @else if (predictionResult() === true) {
+
+                <div class="prediction-result failure-result">
+
+                    <span class="result-badge failure-badge">
+                        Potential Motor Failure
+                    </span>
+
+                    <div class="probability">
+                        <h2>Failure Detected</h2>
+                    </div>
+
+                    <div class="recommendation">
+                        <h5>Recommendation</h5>
+                        <p>
+                            Abnormal motor conditions detected. Inspect the motor
+                            and schedule maintenance to prevent unexpected downtime.
+                        </p>
+                    </div>
+
+                </div>
+
+            } @else {
+
+                <div class="prediction-result normal-result">
+
+                    <span class="result-badge normal-badge">
+                        Normal
+                    </span>
+
+                    <div class="probability">
+                        <h2>Motor Operating Normally</h2>
+                    </div>
+
+                    <div class="recommendation">
+                        <h5>Recommendation</h5>
+                        <p>
+                            The motor appears to be operating normally based on
+                            the provided sensor readings. Continue regular monitoring.
+                        </p>
+                    </div>
+
+                </div>
+
+            }
+
+        </div>
+
+    </div>
+</div>

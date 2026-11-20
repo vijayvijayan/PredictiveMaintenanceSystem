@@ -1,0 +1,229 @@
+
+<div class="page-container">
+
+    <!-- Page Heading -->
+    <div class="page-heading">
+        <div>
+            <h2>Package Damage Inspection</h2>
+            <p>Upload a package image to detect potential damage using AI.</p>
+        </div>
+
+        <span class="status-badge">AI Inspection</span>
+    </div>
+
+    <div class="prediction-layout">
+
+        <!-- Image Upload Panel -->
+        <div class="panel">
+
+            <div class="panel-heading">
+                <h4>Package Image</h4>
+                <p>Select an image of the package you want to inspect.</p>
+            </div>
+
+            <div class="upload-section">
+
+                <input
+    #fileInput
+    type="file"
+    accept="image/*"
+    hidden
+    (change)="onFileSelected($event)"
+/>
+
+                @if (imagePreview()) {
+
+                    
+<div class="image-preview">
+
+    <div class="image-stage">
+
+        <img
+            #previewImage
+            [src]="imagePreview()"
+            alt="Selected package image"
+        />
+
+        @if (predictionResult()) {
+
+            @for (detection of predictionResult()!.detections; track $index) {
+
+                <div
+                    class="detection-box"
+                    [class.damaged-box]="detection.className === 'Damaged'"
+                    [class.normal-box]="detection.className === 'Normal'"
+                    [style.left.%]="detection.x / previewImage.naturalWidth * 100"
+                    [style.top.%]="detection.y / previewImage.naturalHeight * 100"
+                    [style.width.%]="detection.width / previewImage.naturalWidth * 100"
+                    [style.height.%]="detection.height / previewImage.naturalHeight * 100">
+
+                    <span class="detection-label">
+                        {{ detection.className }}
+                        {{ (detection.confidence * 100).toFixed(1) }}%
+                    </span>
+
+                </div>
+
+            }
+
+        }
+
+    </div>
+
+</div>
+@if (predictionResult()) {
+    <div class="detection-summary">
+
+        <h5>Detection Details</h5>
+
+        @for (detection of predictionResult()!.detections; track $index) {
+            <div class="detection-item">
+                <span>
+                    {{ detection.className }}
+                </span>
+
+                <strong>
+                    {{ (detection.confidence * 100).toFixed(2) }}%
+                </strong>
+            </div>
+        }
+
+    </div>
+}
+
+                    <button
+                        type="button"
+                        class="clear-button"
+                        (click)="clearImage(); fileInput.value = ''">
+                        Remove Image
+                    </button>
+
+                } @else {
+
+                   <button
+    type="button"
+    class="upload-placeholder"
+    (click)="fileInput.click()">
+
+    <div class="upload-icon">📦</div>
+
+    <h3>Upload Package Image</h3>
+
+    <p>
+        Click here to select an image from your device.
+    </p>
+
+    <span>Supported formats: JPG, JPEG, PNG</span>
+
+</button>
+
+                }
+
+            </div>
+
+            @if (errorMessage()) {
+                <p class="text-danger">{{ errorMessage() }}</p>
+            }
+
+            <button
+                type="button"
+                class="predict-button"
+                [disabled]="!selectedFile || loading()"
+                (click)="inspectPackage()">
+
+                @if (loading()) {
+                    Inspecting Package...
+                } @else {
+                    Inspect Package
+                }
+
+            </button>
+
+        </div>
+
+        <!-- Inspection Result Panel -->
+        <div class="panel result-panel">
+
+            <div class="panel-heading">
+                <h4>Inspection Result</h4>
+                <p>AI package damage analysis</p>
+            </div>
+
+            @if (predictionResult() === null) {
+
+                <div class="result-placeholder">
+
+                    <div class="result-icon">✦</div>
+
+                    <h3>Awaiting Inspection</h3>
+
+                    <p>
+                        Upload a package image and click Inspect Package
+                        to analyse its condition.
+                    </p>
+
+                </div>
+
+            } @else if (predictionResult()!.isDamaged) {
+
+                <div class="prediction-result failure-result">
+
+                    <span class="result-badge failure-badge">
+                        Package Damaged
+                    </span>
+
+                    <div class="probability">
+                        <h2>Damage Detected</h2>
+
+                        <span>
+                            Confidence:
+                            {{ (predictionResult()!.confidence * 100).toFixed(2) }}%
+                        </span>
+                    </div>
+
+                    <div class="recommendation">
+                        <h5>Recommendation</h5>
+                        <p>
+                            Potential package damage has been detected.
+                            Inspect the package carefully before dispatch
+                            or delivery.
+                        </p>
+                    </div>
+
+                </div>
+
+            } @else {
+
+                <div class="prediction-result normal-result">
+
+                    <span class="result-badge normal-badge">
+                        Normal Package
+                    </span>
+
+                    <div class="probability">
+                        <h2>Package Looks Normal</h2>
+
+                        <span>
+                            Confidence:
+                            {{ (predictionResult()!.confidence * 100).toFixed(2) }}%
+                        </span>
+                    </div>
+
+                    <div class="recommendation">
+                        <h5>Recommendation</h5>
+                        <p>
+                            No visible package damage was detected by the AI
+                            model. The package appears suitable for further
+                            processing.
+                        </p>
+                    </div>
+
+                </div>
+
+            }
+
+        </div>
+
+    </div>
+
+</div>
